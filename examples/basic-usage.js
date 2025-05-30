@@ -61,14 +61,14 @@ async function main() {
       console.log();
     }
 
-    // Example 4: Get detailed bounty information
+    // Example 3: Get detailed bounty information
     if (userBounties.data.length > 0) {
       const firstBounty = userBounties.data[0];
       console.log("🔍 Getting detailed bounty information...");
 
       const details = await sdk.getBountyDetails(
         firstBounty.id,
-        firstBounty["bounty-task"]
+        firstBounty["swarm-type"]
       );
 
       if (details.success && details.data) {
