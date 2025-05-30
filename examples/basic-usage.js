@@ -43,33 +43,7 @@ async function main() {
       console.log(`   Status: ${bugBounty.data.status}\n`);
     }
 
-    // Example 2: Create a feature development bounty with USDC
-    console.log("🛠️  Creating a feature bounty with USDC...");
-    const featureBounty = await sdk.createBounty({
-      email: "product@startup.com",
-      githubUrl: "https://github.com/startup/mobile-app",
-      description:
-        "Implement OAuth 2.0 social login integration with Google, GitHub, and Discord. Include proper error handling and user session management.",
-      bountyAmount: 500,
-      swarmType: "build-feature",
-      bountyType: "usdc",
-      network: "mainnet",
-      projectName: "Mobile App Social Login",
-      account: "0x742d35Cc6634C0532925a3b8D084c22ef4E7a76f",
-      txHash:
-        "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
-    });
-
-    if (featureBounty.success) {
-      console.log("✅ Feature bounty created successfully!");
-      console.log(`   Bounty ID: ${featureBounty.data.id}`);
-      console.log(`   Project: ${featureBounty.data.projectName}`);
-      console.log(
-        `   Amount: ${featureBounty.data.bountyAmount} ${featureBounty.data.bountyType}\n`
-      );
-    }
-
-    // Example 3: Get user bounties
+    // Example 2: Get user bounties
     console.log("📋 Fetching user bounties...");
     const userBounties = await sdk.getUserBounties("developer@example.com");
 
