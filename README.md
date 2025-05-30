@@ -35,8 +35,7 @@ const bounty = await sdk.createBounty({
   description: 'Find and fix security vulnerabilities in the authentication system',
   bountyAmount: 50,
   swarmType: 'find-bugs',
-  bountyType: 'credits',
-  network: 'mainnet'
+  projectName: 'Security Audit'
 });
 
 console.log('Bounty created:', bounty.data);
@@ -69,13 +68,8 @@ const bounty = await sdk.createBounty({
   description: 'Detailed task description',
   bountyAmount: 100,
   swarmType: 'find-bugs', // 'document-summarizer' | 'find-bugs' | 'build-feature'
-  bountyType: 'credits',  // 'usdc' | 'eth' | 'credits' | 'koii' | 'kpl' | 'wkoii'
-  network: 'mainnet',     // 'mainnet' | 'base' | 'sepolia'
   projectName: 'My Project', // optional
-  
-  // Required for non-credits bounties:
-  account: '0x1234...', // wallet address
-  txHash: '0xabcd...'   // transaction hash
+
 });
 ```
 
@@ -88,12 +82,12 @@ const userBounties = await sdk.getUserBounties('user@example.com');
 console.log(`Found ${userBounties.count} bounties:`, userBounties.data);
 ```
 
-#### `getBountyDetails(id: string, swarmType: SwarmType): Promise<GetDetailedBountyResponse>`
+#### `getBountyDetails(id: string): Promise<GetDetailedBountyResponse>`
 
 Gets detailed information about a specific bounty.
 
 ```typescript
-const details = await sdk.getBountyDetails('bounty-id', 'find-bugs');
+const details = await sdk.getBountyDetails('bounty-id');
 console.log('Bounty details:', details.data);
 ```
 
@@ -103,20 +97,9 @@ console.log('Bounty details:', details.data);
 - **`find-bugs`**: Bug finding and security auditing tasks  
 - **`build-feature`**: Feature development and implementation tasks
 
-### Bounty Types
+### Payment Method
 
-- **`credits`**: Platform credits (no blockchain transaction required)
-- **`usdc`**: USDC payments (requires `account` and `txHash`)
-- **`eth`**: Ethereum payments (requires `account` and `txHash`)
-- **`koii`**: KOII token payments (requires `account` and `txHash`)
-- **`kpl`**: KPL token payments (requires `account` and `txHash`)
-- **`wkoii`**: Wrapped KOII payments (requires `account` and `txHash`)
-
-### Networks
-
-- **`mainnet`**: Ethereum mainnet
-- **`base`**: Base network
-- **`sepolia`**: Sepolia testnet
+All bounties are paid using **platform credits**. Credits are automatically deducted from your account balance when creating a bounty.
 
 ## 🛡️ Error Handling
 
@@ -165,35 +148,54 @@ try {
 
 ## 🎯 Examples
 
-### Creating a Bug Bounty with Credits
+### Creating a Bug Bounty
 
 ```typescript
 const bugBounty = await sdk.createBounty({
   email: 'security@company.com',
   githubUrl: 'https://github.com/company/secure-app',
-  description: 'Perform comprehensive security audit of user authentication system',
+  description: 'Perform comprehensive security audit of user authentication system. Focus on SQL injection, XSS, and authentication bypass vulnerabilities.',
   bountyAmount: 75,
   swarmType: 'find-bugs',
-  bountyType: 'credits',
-  network: 'mainnet',
   projectName: 'SecureApp Audit'
 });
+
+if (bugBounty.success) {
+  console.log('Bug bounty created successfully!');
+  console.log('Bounty ID:', bugBounty.data.id);
+  console.log('Status:', bugBounty.data.status);
+}
 ```
 
-### Creating a Feature Development Bounty with USDC
+### Creating a Feature Development Bounty
 
 ```typescript
 const featureBounty = await sdk.createBounty({
   email: 'product@startup.com',
   githubUrl: 'https://github.com/startup/mobile-app',
-  description: 'Implement OAuth 2.0 social login integration with Google and GitHub',
-  bountyAmount: 500,
+  description: 'Implement OAuth 2.0 social login integration with Google, GitHub, and Discord. Include proper error handling and user session management.',
+  bountyAmount: 200,
   swarmType: 'build-feature',
-  bountyType: 'usdc',
-  network: 'mainnet',
-  account: '0x742d35Cc6634C0532925a3b8D084c22ef4E7a76f',
-  txHash: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
-  projectName: 'Mobile App v2.0'
+  projectName: 'Mobile App Social Login'
+});
+
+if (featureBounty.success) {
+  console.log('Feature bounty created successfully!');
+  console.log('Project:', featureBounty.data.projectName);
+  console.log('Amount:', featureBounty.data.bountyAmount, 'credits');
+}
+```
+
+### Creating a Documentation Bounty
+
+```typescript
+const docBounty = await sdk.createBounty({
+  email: 'docs@company.com',
+  githubUrl: 'https://github.com/company/api-docs',
+  description: 'Create comprehensive API documentation with code examples, authentication guides, and troubleshooting sections.',
+  bountyAmount: 50,
+  swarmType: 'document-summarizer',
+  projectName: 'API Documentation'
 });
 ```
 
@@ -206,12 +208,14 @@ const bounties = await sdk.getUserBounties('user@example.com');
 for (const bounty of bounties.data) {
   console.log(`Bounty: ${bounty['project-name']}`);
   console.log(`Status: ${bounty.status}`);
-  console.log(`Amount: ${bounty['bounty-amount']} ${bounty['bounty-type']}`);
+  console.log(`Amount: ${bounty['bounty-amount']} credits`);
   
   // Get detailed information
-  const details = await sdk.getBountyDetails(bounty.id, bounty['bounty-task'] as any);
-  console.log(`Assigned to: ${details.data?.githubUsername || 'Unassigned'}`);
-  console.log(`Subtasks: ${details.data?.subTasks.length || 0}`);
+  const details = await sdk.getBountyDetails(bounty.id);
+  if (details.success && details.data) {
+    console.log(`Assigned to: ${details.data.githubUsername || 'Unassigned'}`);
+    console.log(`Subtasks: ${details.data.subTasks.length || 0}`);
+  }
   console.log('---');
 }
 ```
@@ -231,6 +235,34 @@ const sdk = new PrometheusSwarmSDK({
   retryDelay: 2000,    // Increase initial delay
   timeout: 60000       // Increase timeout
 });
+```
+
+## 💰 Credits Management
+
+### How Credits Work
+
+- **Automatic Deduction**: Credits are automatically deducted when creating bounties
+- **Insufficient Credits**: API will return an error if you don't have enough credits
+- **Credit Balance**: Contact support to check your current credit balance
+- **Purchasing Credits**: Reach out to the Prometheus team to purchase additional credits
+
+### Credit Usage Examples
+
+```typescript
+try {
+  // This will deduct 100 credits from your account
+  const bounty = await sdk.createBounty({
+    email: 'user@example.com',
+    githubUrl: 'https://github.com/user/repo',
+    description: 'High-value feature development',
+    bountyAmount: 100,
+    swarmType: 'build-feature'
+  });
+} catch (error) {
+  if (error.message.includes('Credits validation failed')) {
+    console.error('Insufficient credits! Please contact support to purchase more.');
+  }
+}
 ```
 
 ## 📚 TypeScript Support
@@ -273,6 +305,14 @@ If you encounter any issues or have questions:
 3. Search [existing issues](https://github.com/prometheus-swarm/sdk/issues)
 4. Create a [new issue](https://github.com/prometheus-swarm/sdk/issues/new)
 5. Join our [Discord community](https://discord.gg/prometheus)
+
+## 💡 Need More Credits?
+
+Contact the Prometheus team to:
+- Check your current credit balance
+- Purchase additional credits
+- Set up auto-renewal for your account
+- Discuss enterprise credit packages
 
 ---
 
