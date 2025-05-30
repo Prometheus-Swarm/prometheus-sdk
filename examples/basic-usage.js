@@ -2,7 +2,7 @@
 
 /**
  * Basic usage example for Prometheus Swarm SDK
- * 
+ *
  * This example demonstrates:
  * - Creating different types of bounties
  * - Fetching user bounties
@@ -10,72 +10,79 @@
  * - Error handling
  */
 
-const { PrometheusSwarmSDK } = require('prometheus-swarm-sdk');
+const { PrometheusSwarmSDK } = require("prometheus-swarm-sdk");
 
 // Initialize SDK
 const sdk = new PrometheusSwarmSDK({
-  apiKey: process.env.PROMETHEUS_API_KEY || 'your-api-key-here',
-  baseUrl: 'https://prometheusswarm.ai'
+  apiKey: process.env.PROMETHEUS_API_KEY || "your-api-key-here",
+  baseUrl: "https://prometheusswarm.ai"
 });
 
 async function main() {
   try {
-    console.log('🔥 Prometheus Swarm SDK Example\n');
+    console.log("🔥 Prometheus Swarm SDK Example\n");
 
     // Example 1: Create a credits-based bug bounty
-    console.log('📝 Creating a bug bounty with credits...');
+    console.log("📝 Creating a bug bounty with credits...");
     const bugBounty = await sdk.createBounty({
-      email: 'developer@example.com',
-      githubUrl: 'https://github.com/example/secure-app',
-      description: 'Find security vulnerabilities in the authentication system. Focus on SQL injection, XSS, and authentication bypass vulnerabilities.',
+      email: "developer@example.com",
+      githubUrl: "https://github.com/example/secure-app",
+      description:
+        "Find security vulnerabilities in the authentication system. Focus on SQL injection, XSS, and authentication bypass vulnerabilities.",
       bountyAmount: 50,
-      swarmType: 'find-bugs',
-      bountyType: 'credits',
-      network: 'mainnet',
-      projectName: 'SecureApp Security Audit'
+      swarmType: "find-bugs",
+      bountyType: "credits",
+      network: "mainnet",
+      projectName: "SecureApp Security Audit"
     });
 
     if (bugBounty.success) {
-      console.log('✅ Bug bounty created successfully!');
+      console.log("✅ Bug bounty created successfully!");
       console.log(`   Bounty ID: ${bugBounty.data.id}`);
       console.log(`   Project: ${bugBounty.data.projectName}`);
       console.log(`   Status: ${bugBounty.data.status}\n`);
     }
 
     // Example 2: Create a feature development bounty with USDC
-    console.log('🛠️  Creating a feature bounty with USDC...');
+    console.log("🛠️  Creating a feature bounty with USDC...");
     const featureBounty = await sdk.createBounty({
-      email: 'product@startup.com',
-      githubUrl: 'https://github.com/startup/mobile-app',
-      description: 'Implement OAuth 2.0 social login integration with Google, GitHub, and Discord. Include proper error handling and user session management.',
+      email: "product@startup.com",
+      githubUrl: "https://github.com/startup/mobile-app",
+      description:
+        "Implement OAuth 2.0 social login integration with Google, GitHub, and Discord. Include proper error handling and user session management.",
       bountyAmount: 500,
-      swarmType: 'build-feature',
-      bountyType: 'usdc',
-      network: 'mainnet',
-      projectName: 'Mobile App Social Login',
-      account: '0x742d35Cc6634C0532925a3b8D084c22ef4E7a76f',
-      txHash: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
+      swarmType: "build-feature",
+      bountyType: "usdc",
+      network: "mainnet",
+      projectName: "Mobile App Social Login",
+      account: "0x742d35Cc6634C0532925a3b8D084c22ef4E7a76f",
+      txHash:
+        "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
     });
 
     if (featureBounty.success) {
-      console.log('✅ Feature bounty created successfully!');
+      console.log("✅ Feature bounty created successfully!");
       console.log(`   Bounty ID: ${featureBounty.data.id}`);
       console.log(`   Project: ${featureBounty.data.projectName}`);
-      console.log(`   Amount: ${featureBounty.data.bountyAmount} ${featureBounty.data.bountyType}\n`);
+      console.log(
+        `   Amount: ${featureBounty.data.bountyAmount} ${featureBounty.data.bountyType}\n`
+      );
     }
 
     // Example 3: Get user bounties
-    console.log('📋 Fetching user bounties...');
-    const userBounties = await sdk.getUserBounties('developer@example.com');
-    
+    console.log("📋 Fetching user bounties...");
+    const userBounties = await sdk.getUserBounties("developer@example.com");
+
     if (userBounties.success) {
       console.log(`✅ Found ${userBounties.count} bounties for user`);
-      
+
       userBounties.data.forEach((bounty, index) => {
-        console.log(`   ${index + 1}. ${bounty['project-name']}`);
+        console.log(`   ${index + 1}. ${bounty["project-name"]}`);
         console.log(`      Status: ${bounty.status}`);
-        console.log(`      Amount: ${bounty['bounty-amount']} ${bounty['bounty-type']}`);
-        console.log(`      GitHub: ${bounty['github-url']}`);
+        console.log(
+          `      Amount: ${bounty["bounty-amount"]} ${bounty["bounty-type"]}`
+        );
+        console.log(`      GitHub: ${bounty["github-url"]}`);
       });
       console.log();
     }
@@ -83,22 +90,24 @@ async function main() {
     // Example 4: Get detailed bounty information
     if (userBounties.data.length > 0) {
       const firstBounty = userBounties.data[0];
-      console.log('🔍 Getting detailed bounty information...');
-      
+      console.log("🔍 Getting detailed bounty information...");
+
       const details = await sdk.getBountyDetails(
-        firstBounty.id, 
-        firstBounty['bounty-task']
+        firstBounty.id,
+        firstBounty["bounty-task"]
       );
 
       if (details.success && details.data) {
-        console.log('✅ Bounty details retrieved:');
+        console.log("✅ Bounty details retrieved:");
         console.log(`   Task: ${details.data.taskName}`);
         console.log(`   Type: ${details.data.swarmType}`);
-        console.log(`   Assigned to: ${details.data.githubUsername || 'Unassigned'}`);
+        console.log(
+          `   Assigned to: ${details.data.githubUsername || "Unassigned"}`
+        );
         console.log(`   Subtasks: ${details.data.subTasks.length}`);
-        
+
         if (details.data.subTasks.length > 0) {
-          console.log('   Subtask details:');
+          console.log("   Subtask details:");
           details.data.subTasks.forEach((task, index) => {
             console.log(`     ${index + 1}. ${task.title} - ${task.status}`);
           });
@@ -106,18 +115,21 @@ async function main() {
       }
     }
 
-    console.log('\n🎉 Example completed successfully!');
-
+    console.log("\n🎉 Example completed successfully!");
   } catch (error) {
-    console.error('❌ Error occurred:', error.message);
-    
+    console.error("❌ Error occurred:", error.message);
+
     // Handle specific error types
-    if (error.constructor.name === 'ValidationError') {
-      console.error('   Field:', error.field);
-    } else if (error.constructor.name === 'AuthenticationError') {
-      console.error('   Check your API key');
-    } else if (error.constructor.name === 'RateLimitError') {
-      console.error('   Rate limit exceeded. Try again in:', error.retryAfter, 'seconds');
+    if (error.constructor.name === "ValidationError") {
+      console.error("   Field:", error.field);
+    } else if (error.constructor.name === "AuthenticationError") {
+      console.error("   Check your API key");
+    } else if (error.constructor.name === "RateLimitError") {
+      console.error(
+        "   Rate limit exceeded. Try again in:",
+        error.retryAfter,
+        "seconds"
+      );
     }
   }
 }
@@ -127,4 +139,4 @@ if (require.main === module) {
   main().catch(console.error);
 }
 
-module.exports = { main }; 
+module.exports = { main };

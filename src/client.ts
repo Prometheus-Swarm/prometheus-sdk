@@ -1,21 +1,21 @@
-import fetch from 'cross-fetch';
+import fetch from "cross-fetch";
 import {
-    AuthenticationError,
-    NetworkError,
-    PrometheusAPIError,
-    PrometheusSDKError,
-    RateLimitError
-} from './errors';
+  AuthenticationError,
+  NetworkError,
+  PrometheusAPIError,
+  PrometheusSDKError,
+  RateLimitError
+} from "./errors";
 import {
-    CreateBountyPayload,
-    CreateBountyRequest,
-    CreateBountyResponse,
-    GetDetailedBountyResponse,
-    GetUserBountiesResponse,
-    SDKConfig,
-    SwarmType
-} from './types';
-import { sleep, validateCreateBountyRequest } from './utils';
+  CreateBountyPayload,
+  CreateBountyRequest,
+  CreateBountyResponse,
+  GetDetailedBountyResponse,
+  GetUserBountiesResponse,
+  SDKConfig,
+  SwarmType
+} from "./types";
+import { sleep, validateCreateBountyRequest } from "./utils";
 
 export class PrometheusSwarmSDK {
   private readonly apiKey: string;
@@ -26,11 +26,11 @@ export class PrometheusSwarmSDK {
 
   constructor(config: SDKConfig) {
     if (!config.apiKey) {
-      throw new PrometheusSDKError('API key is required');
+      throw new PrometheusSDKError("API key is required");
     }
 
     this.apiKey = config.apiKey;
-    this.baseUrl = config.baseUrl || 'https://prometheusswarm.ai';
+    this.baseUrl = config.baseUrl || "https://prometheusswarm.ai";
     this.timeout = config.timeout || 30000;
     this.retryAttempts = config.retryAttempts || 3;
     this.retryDelay = config.retryDelay || 1000;
@@ -42,14 +42,14 @@ export class PrometheusSwarmSDK {
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.apiKey}`,
-      ...options.headers,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.apiKey}`,
+      ...options.headers
     };
 
     const requestOptions: RequestInit = {
       ...options,
-      headers,
+      headers
     };
 
     // Add timeout support
@@ -61,16 +61,18 @@ export class PrometheusSwarmSDK {
       try {
         const response = await fetch(url, requestOptions);
         clearTimeout(timeoutId);
-        
+
         const data = await response.json();
 
         if (!response.ok) {
           if (response.status === 401) {
-            throw new AuthenticationError(data.error || 'Unauthorized');
+            throw new AuthenticationError(data.error || "Unauthorized");
           }
-          
+
           if (response.status === 429) {
-            const retryAfter = parseInt(response.headers.get('Retry-After') || '900');
+            const retryAfter = parseInt(
+              response.headers.get("Retry-After") || "900"
+            );
             if (attempt < this.retryAttempts) {
               await sleep(this.retryDelay * attempt);
               continue;
@@ -88,23 +90,26 @@ export class PrometheusSwarmSDK {
         return data;
       } catch (error) {
         clearTimeout(timeoutId);
-        
+
         if (error instanceof PrometheusAPIError) {
           throw error;
         }
 
         if (attempt === this.retryAttempts) {
-          if (error instanceof TypeError && error.message.includes('fetch')) {
-            throw new NetworkError('Network request failed', error as Error);
+          if (error instanceof TypeError && error.message.includes("fetch")) {
+            throw new NetworkError("Network request failed", error as Error);
           }
-          throw new NetworkError(`Request failed after ${this.retryAttempts} attempts`, error as Error);
+          throw new NetworkError(
+            `Request failed after ${this.retryAttempts} attempts`,
+            error as Error
+          );
         }
 
         await sleep(this.retryDelay * attempt);
       }
     }
 
-    throw new NetworkError('Maximum retry attempts exceeded');
+    throw new NetworkError("Maximum retry attempts exceeded");
   }
 
   /**
@@ -112,11 +117,11 @@ export class PrometheusSwarmSDK {
    * @param request - Bounty creation parameters
    * @returns Promise resolving to the created bounty data
    */
-  async createBounty(request: CreateBountyRequest): Promise<CreateBountyResponse> {
+  async createBounty(
+    request: CreateBountyRequest
+  ): Promise<CreateBountyResponse> {
     // Validate input
     validateCreateBountyRequest(request);
-
-    const isCreditsBounty = request.bountyType === 'credits';
 
     const payload: CreateBountyPayload = {
       values: {
@@ -125,19 +130,15 @@ export class PrometheusSwarmSDK {
         description: request.description,
         bountyAmount: request.bountyAmount,
         swarmType: request.swarmType,
-        bountyType: request.bountyType,
-        network: request.network,
+        bountyType: "credits", // API only supports credits
         projectName: request.projectName,
-        isAutoIntegrationKit: request.isAutoIntegrationKit || false,
-      },
-      account: request.account,
-      txHash: request.txHash,
-      isCreditsBounty,
+        isAutoIntegrationKit: request.isAutoIntegrationKit || false
+      }
     };
 
-    return this.makeRequest<CreateBountyResponse>('/api/v1/swarm', {
-      method: 'POST',
-      body: JSON.stringify(payload),
+    return this.makeRequest<CreateBountyResponse>("/api/v1/swarm", {
+      method: "POST",
+      body: JSON.stringify(payload)
     });
   }
 
@@ -148,11 +149,13 @@ export class PrometheusSwarmSDK {
    */
   async getUserBounties(email: string): Promise<GetUserBountiesResponse> {
     if (!email) {
-      throw new PrometheusSDKError('Email is required');
+      throw new PrometheusSDKError("Email is required");
     }
 
     const params = new URLSearchParams({ email });
-    return this.makeRequest<GetUserBountiesResponse>(`/api/v1/swarm/user?${params}`);
+    return this.makeRequest<GetUserBountiesResponse>(
+      `/api/v1/swarm/user?${params}`
+    );
   }
 
   /**
@@ -161,28 +164,33 @@ export class PrometheusSwarmSDK {
    * @param swarmType - Type of swarm task
    * @returns Promise resolving to detailed bounty information
    */
-  async getBountyDetails(id: string, swarmType: SwarmType): Promise<GetDetailedBountyResponse> {
+  async getBountyDetails(
+    id: string,
+    swarmType: SwarmType
+  ): Promise<GetDetailedBountyResponse> {
     if (!id) {
-      throw new PrometheusSDKError('Bounty ID is required');
+      throw new PrometheusSDKError("Bounty ID is required");
     }
     if (!swarmType) {
-      throw new PrometheusSDKError('Swarm type is required');
+      throw new PrometheusSDKError("Swarm type is required");
     }
 
     const params = new URLSearchParams({ id, swarmType });
-    return this.makeRequest<GetDetailedBountyResponse>(`/api/v1/swarm/details?${params}`);
+    return this.makeRequest<GetDetailedBountyResponse>(
+      `/api/v1/swarm/details?${params}`
+    );
   }
 
   /**
    * Get SDK configuration (without exposing API key)
    */
-  getConfig(): Omit<SDKConfig, 'apiKey'> & { hasApiKey: boolean } {
+  getConfig(): Omit<SDKConfig, "apiKey"> & { hasApiKey: boolean } {
     return {
       baseUrl: this.baseUrl,
       timeout: this.timeout,
       retryAttempts: this.retryAttempts,
       retryDelay: this.retryDelay,
-      hasApiKey: !!this.apiKey,
+      hasApiKey: !!this.apiKey
     };
   }
-} 
+}

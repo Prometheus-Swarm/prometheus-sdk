@@ -1,7 +1,12 @@
-export type SwarmType = 'document-summarizer' | 'find-bugs' | 'build-feature';
-export type BountyType = 'usdc' | 'eth' | 'credits' | 'koii' | 'kpl' | 'wkoii';
-export type Network = 'mainnet' | 'base' | 'sepolia';
-export type BountyStatus = 'in-progress' | 'assigned' | 'auditing' | 'completed' | 'failed';
+export type SwarmType = "document-summarizer" | "find-bugs" | "build-feature";
+export type BountyType = "usdc" | "eth" | "credits" | "koii" | "kpl" | "wkoii";
+export type Network = "mainnet" | "base" | "sepolia";
+export type BountyStatus =
+  | "in-progress"
+  | "assigned"
+  | "auditing"
+  | "completed"
+  | "failed";
 
 export interface SDKConfig {
   apiKey: string;
@@ -17,13 +22,8 @@ export interface CreateBountyRequest {
   description: string;
   bountyAmount: number;
   swarmType: SwarmType;
-  bountyType: BountyType;
-  network: Network;
   projectName?: string;
   isAutoIntegrationKit?: boolean;
-  // Required for non-credits bounties
-  account?: string;
-  txHash?: string;
 }
 
 export interface CreateBountyPayload {
@@ -33,14 +33,10 @@ export interface CreateBountyPayload {
     description: string;
     bountyAmount: number;
     swarmType: SwarmType;
-    bountyType: BountyType;
-    network: Network;
+    bountyType: "credits";
     projectName?: string;
     isAutoIntegrationKit?: boolean;
   };
-  account?: string;
-  txHash?: string;
-  isCreditsBounty: boolean;
 }
 
 export interface BountyData {
@@ -62,13 +58,13 @@ export interface CreateBountyResponse {
 
 export interface UserBounty {
   id: string;
-  'github-url': string;
-  'bounty-task': string;
-  'project-name': string;
+  "github-url": string;
+  "bounty-task": string;
+  "project-name": string;
   description: string;
-  'bounty-amount': number;
-  'bounty-type': string;
-  'transaction-hash': string;
+  "bounty-amount": number;
+  "bounty-type": string;
+  "transaction-hash": string;
   status: BountyStatus;
   network: Network;
   assignedNode: any;
@@ -117,4 +113,4 @@ export interface APIResponse<T = any> {
   data?: T;
   error?: string;
   details?: any;
-} 
+}
