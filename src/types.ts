@@ -24,7 +24,6 @@ export interface CreateBountyRequest {
   swarmType: SwarmType;
   projectName?: string;
   isAutoIntegrationKit?: boolean;
-  githubUsername?: string;
 }
 
 export interface CreateBountyPayload {
@@ -37,7 +36,6 @@ export interface CreateBountyPayload {
     bountyType: "credits";
     projectName?: string;
     isAutoIntegrationKit?: boolean;
-    githubUsername?: string;
   };
 }
 
@@ -52,6 +50,7 @@ export interface BountyData {
   createdAt: string;
   // User credit information for billing
   userCredits: {
+    currentCredits: number;
     chargeAmount: number;
     userCreated: boolean;
   };

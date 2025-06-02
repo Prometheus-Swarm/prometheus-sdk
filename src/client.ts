@@ -132,8 +132,7 @@ export class PrometheusSwarmSDK {
         swarmType: request.swarmType,
         bountyType: "credits", // API only supports credits
         projectName: request.projectName,
-        isAutoIntegrationKit: request.isAutoIntegrationKit || false,
-        githubUsername: request.githubUsername
+        isAutoIntegrationKit: request.isAutoIntegrationKit || false
       }
     };
 
