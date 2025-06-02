@@ -1,6 +1,6 @@
 {
     "name": "prometheus-swarm-sdk",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Official TypeScript/JavaScript SDK for the Prometheus Swarm platform. Create bounties, manage swarm tasks, and interact with the decentralized workforce platform programmatically.",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",

@@ -65,9 +65,7 @@ describe("PrometheusSwarmSDK", () => {
       githubUrl: "https://github.com/test/repo",
       description: "Test bounty description",
       bountyAmount: 100,
-      swarmType: "find-bugs" as const,
-      bountyType: "credits" as const,
-      network: "mainnet" as const
+      swarmType: "find-bugs" as const
     };
 
     it("should create bounty successfully", async () => {
@@ -80,7 +78,6 @@ describe("PrometheusSwarmSDK", () => {
           githubUrl: "https://github.com/test/repo",
           swarmType: "find-bugs",
           bountyAmount: 100,
-          bountyType: "credits",
           createdAt: "2024-01-01T00:00:00Z"
         }
       };

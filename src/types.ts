@@ -1,6 +1,4 @@
 export type SwarmType = "document-summarizer" | "find-bugs" | "build-feature";
-export type BountyType = "usdc" | "eth" | "credits" | "koii" | "kpl" | "wkoii";
-export type Network = "mainnet" | "base" | "sepolia";
 export type BountyStatus =
   | "in-progress"
   | "assigned"
@@ -23,7 +21,6 @@ export interface CreateBountyRequest {
   bountyAmount: number;
   swarmType: SwarmType;
   projectName?: string;
-  isAutoIntegrationKit?: boolean;
 }
 
 export interface CreateBountyPayload {
@@ -33,9 +30,7 @@ export interface CreateBountyPayload {
     description: string;
     bountyAmount: number;
     swarmType: SwarmType;
-    bountyType: "credits";
     projectName?: string;
-    isAutoIntegrationKit?: boolean;
   };
 }
 
@@ -46,7 +41,6 @@ export interface BountyData {
   githubUrl: string;
   swarmType: SwarmType;
   bountyAmount: number;
-  bountyType: BountyType;
   createdAt: string;
   // User credit information for billing
   userCredits: {
@@ -69,10 +63,7 @@ export interface UserBounty {
   "project-name": string;
   description: string;
   "bounty-amount": number;
-  "bounty-type": string;
-  "transaction-hash": string;
   status: BountyStatus;
-  network: Network;
   assignedNode: any;
   isMyPortal: boolean;
 }

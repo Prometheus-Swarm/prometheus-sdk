@@ -30,12 +30,12 @@ const sdk = new PrometheusSwarmSDK({
 
 // Create a bounty
 const bounty = await sdk.createBounty({
-  email: 'developer@example.com',
-  githubUrl: 'https://github.com/username/repository',
-  description: 'Find and fix security vulnerabilities in the authentication system',
-  bountyAmount: 50,
-  swarmType: 'find-bugs',
-  projectName: 'Security Audit'
+  email: 'user@example.com',
+  githubUrl: 'https://github.com/owner/repo',
+  description: 'Detailed task description',
+  bountyAmount: 100,
+  swarmType: 'find-bugs', // 'document-summarizer' | 'find-bugs' | 'build-feature'
+  projectName: 'My Project' // optional
 });
 
 console.log('Bounty created:', bounty.data);
@@ -68,8 +68,7 @@ const bounty = await sdk.createBounty({
   description: 'Detailed task description',
   bountyAmount: 100,
   swarmType: 'find-bugs', // 'document-summarizer' | 'find-bugs' | 'build-feature'
-  projectName: 'My Project', // optional
-
+  projectName: 'My Project' // optional
 });
 ```
 

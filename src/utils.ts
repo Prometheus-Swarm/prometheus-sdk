@@ -1,5 +1,5 @@
 import { ValidationError } from "./errors";
-import { BountyType, CreateBountyRequest, Network, SwarmType } from "./types";
+import { CreateBountyRequest, SwarmType } from "./types";
 
 export function validateEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -21,14 +21,6 @@ export function validateGitHubUrl(url: string): boolean {
 
 export function validateSwarmType(type: string): type is SwarmType {
   return ["document-summarizer", "find-bugs", "build-feature"].includes(type);
-}
-
-export function validateBountyType(type: string): type is BountyType {
-  return ["usdc", "eth", "credits", "koii", "kpl", "wkoii"].includes(type);
-}
-
-export function validateNetwork(network: string): network is Network {
-  return ["mainnet", "base", "sepolia"].includes(network);
 }
 
 export function validateCreateBountyRequest(
@@ -84,8 +76,6 @@ export function validateCreateBountyRequest(
       "projectName"
     );
   }
-
-  // ✅ REMOVED: All blockchain payment validation
 }
 
 export function sleep(ms: number): Promise<void> {
