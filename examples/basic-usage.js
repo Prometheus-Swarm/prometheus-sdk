@@ -33,7 +33,7 @@ async function main() {
       swarmType: "find-bugs",
       bountyType: "credits",
       network: "mainnet",
-      projectName: "SecureApp Security Audit"
+      githubUsername: "githubUsername"
     });
 
     if (bugBounty.success) {
