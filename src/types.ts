@@ -48,6 +48,11 @@ export interface BountyData {
   bountyAmount: number;
   bountyType: BountyType;
   createdAt: string;
+  // User credit information for billing
+  userCredits: {
+    chargeAmount: number;
+    userCreated: boolean;
+  };
 }
 
 export interface CreateBountyResponse {
